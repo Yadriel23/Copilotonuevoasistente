@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Pro - EV, Motor y Conversión de Energía | Yadriel Morales Dávila</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        cardBorder: '#e2e8f0',
+                        blueAccent: '#2563eb',
+                        blueHover: '#1d4ed8',
+                        blueNeon: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; color: #0f172a; font-family: system-ui, -apple-system, sans-serif; }
+        input[type="range"] { accent-color: #2563eb; }
+        .shadow-box { box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.08), 0 2px 4px -1px rgba(37, 99, 235, 0.04); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col justify-between">
+
+    <div class="max-w-7xl mx-auto space-y-8 w-full">
+        <!-- Título Principal con tu Nombre -->
+        <header class="text-center space-y-3 border-b border-cardBorder pb-6">
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-blue-600">
+                Simulador de Ingeniería EV & Mecánica
+            </h1>
+            <p class="text-slate-600 text-sm md:text-base">Transformación de Energía, Motores Eléctricos, Dinámica Vehicular y Esfuerzos</p>
+            <div class="flex flex-wrap justify-center gap-2 pt-2">
+                <span class="inline-block bg-blue-50 border border-blue-200 text-blue-700 text-xs md:text-sm font-semibold px-3 py-1 rounded-full">
+                    Creado por: Yadriel Morales Dávila
+                </span>
+                <span class="inline-block bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs md:text-sm font-semibold px-3 py-1 rounded-full">
+                    📞 939-247-6011
+                </span>
+            </div>
+
+            <!-- Botón Probar Simulador -->
+            <div class="pt-4">
+                <a href="#simulador-section" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+                    🚀 Probar Simulador Ahora
+                </a>
+            </div>
+        </header>
+
+        <!-- NUEVA SECCIÓN: Transformación de Energía en Movimiento -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-4">
+            <h2 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                ⚡ Conversión de Energía Eléctrica a Movimiento Mecánico
+            </h2>
+            <p class="text-slate-600 text-sm leading-relaxed">
+                En un vehículo eléctrico (EV), la batería de alto voltaje almacena energía química que se transforma en energía eléctrica de corriente alterna (AC) mediante el inversor. Esta energía alimenta el motor eléctrico, donde los campos electromagnéticos inducen la rotación del rotor.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-sm">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                    <span class="font-bold text-blue-800 block text-base mb-1">1. Potencia (kW)</span>
+                    <p class="text-slate-600">Representa la tasa de flujo de energía eléctrica suministrada por el sistema por unidad de tiempo.</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                    <span class="font-bold text-blue-800 block text-base mb-1">2. Torque (Nm)</span>
+                    <p class="text-slate-600">Es la fuerza de giro instantánea generada en el eje, responsable de arrancar el vehículo desde cero.</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                    <span class="font-bold text-blue-800 block text-base mb-1">3. Movimiento (RPM / Vel)</span>
+                    <p class="text-slate-600">La velocidad angular resultante se transmite a través de engranajes hacia las ruedas para desplazar la masa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANCLAJE PARA EL SIMULADOR -->
+        <div id="simulador-section" class="pt-2"></div>
+
+        <!-- GRID PRINCIPAL -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- COLUMNA 1 & 2: CONTROLES Y GRÁFICAS -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Panel de Controles -->
+                <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-6">
+                    <h2 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                        ⚙️ Parámetros del Motor y Vehículo
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Torque Max -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-700 font-medium">Torque Máx ($T_{max}$):</span>
+                                <span id="valTorque" class="font-bold text-blue-600">350 Nm</span>
+                            </div>
+                            <input id="inputTorque" type="range" min="50" max="1000" step="10" value="350" class="w-full bg-slate-200 rounded-lg h-2 cursor-pointer">
+                        </div>
+
+                        <!-- Potencia Nominal -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-700 font-medium">Potencia Nominal ($P$):</span>
+                                <span id="valPower" class="font-bold text-blue-600">150 kW</span>
+                            </div>
+                            <input id="inputPower" type="range" min="30" max="600" step="10" value="150" class="w-full bg-slate-200 rounded-lg h-2 cursor-pointer">
+                        </div>
+
+                        <!-- RPM Máximas -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-700 font-medium">RPM Máximas:</span>
+                                <span id="valRpm" class="font-bold text-blue-600">12,000 RPM</span>
+                            </div>
+                            <input id="inputRpm" type="range" min="3000" max="24000" step="500" value="12000" class="w-full bg-slate-200 rounded-lg h-2 cursor-pointer">
+                        </div>
+
+                        <!-- Masa del Vehículo -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-700 font-medium">Masa del Vehículo ($m$):</span>
+                                <span id="valMass" class="font-bold text-blue-600">1,600 kg</span>
+                            </div>
+                            <input id="inputMass" type="range" min="800" max="3500" step="50" value="1600" class="w-full bg-slate-200 rounded-lg h-2 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Gráficos -->
+                <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-4">
+                    <h2 class="text-xl font-bold text-blue-700">📊 Curvas Dinámicas (Torque & Potencia vs RPM)</h2>
+                    <div class="relative h-72 w-full">
+                        <canvas id="dynoChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA 3: TELEMETRÍA Y RESULTADOS -->
+            <div class="space-y-6">
+                <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-6">
+                    <h2 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                        📈 Telemetría en Vivo
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 border border-cardBorder p-4 rounded-xl flex justify-between items-center">
+                            <span class="text-slate-600 text-sm font-medium">Velocidad Estimada (0-100):</span>
+                            <span id="teleSpeed" class="text-2xl font-black text-blue-600">3.8 s</span>
+                        </div>
+
+                        <div class="bg-slate-50 border border-cardBorder p-4 rounded-xl flex justify-between items-center">
+                            <span class="text-slate-600 text-sm font-medium">Torque en Rueda (Con Transmisión):</span>
+                            <span id="teleWheelTorque" class="text-2xl font-black text-blue-800">-- Nm</span>
+                        </div>
+
+                        <div class="bg-slate-50 border border-cardBorder p-4 rounded-xl flex justify-between items-center">
+                            <span class="text-slate-600 text-sm font-medium">Autonomía Estimada (WLTP):</span>
+                            <span id="teleRange" class="text-2xl font-black text-blue-600">450 km</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO: Relación de Transmisión -->
+                <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-4">
+                    <h2 class="text-lg font-bold text-blue-700">⚙️ Relación de Engranajes</h2>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-medium">Dientes Piñón ($Z_1$):</span>
+                            <input id="gearZ1" type="number" value="15" class="w-20 bg-slate-50 border border-cardBorder text-right px-2 py-1 rounded text-blue-600 font-bold">
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-medium">Dientes Corona ($Z_2$):</span>
+                            <input id="gearZ2" type="number" value="120" class="w-20 bg-slate-50 border border-cardBorder text-right px-2 py-1 rounded text-blue-600 font-bold">
+                        </div>
+                        <div class="pt-2 border-t border-cardBorder flex justify-between font-bold">
+                            <span class="text-slate-700">Relación i:</span>
+                            <span id="gearRatioResult" class="text-blue-600">8.00 : 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MÓDULO: Esfuerzo y Deformación Mecánica -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-6">
+            <h2 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                🔩 Análisis de Esfuerzo, Deformación y Fatiga (Eje Transmisión)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <label class="text-sm text-slate-700 font-medium">Material del Eje:</label>
+                    <select id="materialSelect" class="w-full bg-slate-50 border border-cardBorder rounded-lg p-2 text-blue-600 font-semibold">
+                        <option value="4340">Acero AISI 4340 (Alta Resistencia)</option>
+                        <option value="1045">Acero AISI 1045 (Estándar)</option>
+                        <option value="7075">Aluminio 7075-T6 (Aeroespacial)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-700 font-medium">Diámetro del Eje ($d$):</span>
+                        <span id="valDia" class="font-bold text-blue-600">45 mm</span>
+                    </div>
+                    <input id="inputDia" type="range" min="20" max="90" step="1" value="45" class="w-full bg-slate-200 rounded-lg h-2 cursor-pointer">
+                </div>
+
+                <div class="bg-slate-50 border border-cardBorder p-4 rounded-xl flex flex-col justify-center space-y-1">
+                    <span class="text-xs text-slate-500 font-medium">Factor de Seguridad Estructural ($FoS$):</span>
+                    <span id="resFoS" class="text-2xl font-black text-emerald-600">3.4 (Seguro)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- APARTADO: Contacto Profesional -->
+        <div class="bg-cardBg border border-cardBorder rounded-2xl p-6 shadow-box space-y-4">
+            <h2 class="text-xl font-bold text-blue-700 flex items-center gap-2">
+                📬 Contacto e Información del Desarrollador
+            </h2>
+            <p class="text-slate-600 text-sm">¿Tienes dudas sobre los cálculos o el proyecto? Comunícate directamente:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <a href="mailto:yadrielm66@gmail.com" class="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 hover:bg-blue-100 transition">
+                    <span class="text-2xl">📧</span>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Correo Electrónico (Gmail)</p>
+                        <p class="text-blue-700 font-bold">yadrielm66@gmail.com</p>
+                    </div>
+                </a>
+                <a href="tel:9392476011" class="flex items-center gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 hover:bg-blue-100 transition">
+                    <span class="text-2xl">📞</span>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Teléfono / Móvil</p>
+                        <p class="text-blue-700 font-bold">939-247-6011</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer con tu Información Personal -->
+    <footer class="max-w-7xl mx-auto w-full mt-12 border-t border-cardBorder pt-6 pb-4 text-center text-slate-500 text-sm">
+        <p>Proyecto desarrollado por <span class="text-blue-600 font-bold">Yadriel Morales Dávila</span></p>
+        <p class="mt-1 text-xs text-slate-400">Simulador de Motores Eléctricos, Transmisiones y Esfuerzos Mecánicos • 2026</p>
+    </footer>
+
+    <!-- Script de Lógica del Simulador -->
+    <script>
+        const inputTorque = document.getElementById('inputTorque');
+        const inputPower = document.getElementById('inputPower');
+        const inputRpm = document.getElementById('inputRpm');
+        const inputMass = document.getElementById('inputMass');
+        const inputDia = document.getElementById('inputDia');
+        const gearZ1 = document.getElementById('gearZ1');
+        const gearZ2 = document.getElementById('gearZ2');
+
+        const valTorque = document.getElementById('valTorque');
+        const valPower = document.getElementById('valPower');
+        const valRpm = document.getElementById('valRpm');
+        const valMass = document.getElementById('valMass');
+        const valDia = document.getElementById('valDia');
+
+        const teleWheelTorque = document.getElementById('teleWheelTorque');
+        const teleSpeed = document.getElementById('teleSpeed');
+        const gearRatioResult = document.getElementById('gearRatioResult');
+        const resFoS = document.getElementById('resFoS');
+
+        const ctx = document.getElementById('dynoChart').getContext('2d');
+        const dynoChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [0, 2000, 4000, 6000, 8000, 10000, 12000],
+                datasets: [
+                    {
+                        label: 'Torque (Nm)',
+                        data: [350, 350, 350, 300, 240, 180, 120],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#1e293b' } } },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } },
+                    y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
+                }
+            }
+        });
+
+        function updateSim() {
+            const tMax = parseFloat(inputTorque.value);
+            const pNom = parseFloat(inputPower.value);
+            const rpmMax = parseFloat(inputRpm.value);
+            const mass = parseFloat(inputMass.value);
+            const dia = parseFloat(inputDia.value);
+            const z1 = parseFloat(gearZ1.value) || 1;
+            const z2 = parseFloat(gearZ2.value) || 1;
+
+            valTorque.innerText = tMax + ' Nm';
+            valPower.innerText = pNom + ' kW';
+            valRpm.innerText = rpmMax.toLocaleString() + ' RPM';
+            valMass.innerText = mass.toLocaleString() + ' kg';
+            valDia.innerText = dia + ' mm';
+
+            const ratio = (z2 / z1).toFixed(2);
+            gearRatioResult.innerText = ratio + ' : 1';
+
+            const wheelTq = Math.round(tMax * ratio * 0.95);
+            teleWheelTorque.innerText = wheelTq.toLocaleString() + ' Nm';
+
+            const accTime = (mass / (pNom * 3.2)).toFixed(2);
+            teleSpeed.innerText = accTime + ' s';
+
+            const T_nmm = tMax * 1000;
+            const r_mm = dia / 2;
+            const J = (Math.PI * Math.pow(dia, 4)) / 32; 
+            const shearStress = (T_nmm * r_mm) / J; 
+
+            const matYield = 700; 
+            const fos = (matYield / (shearStress || 1)).toFixed(1);
+            resFoS.innerText = fos + (fos > 1.5 ? ' (Seguro)' : ' (Alerta)');
+            resFoS.className = fos > 1.5 ? 'text-2xl font-black text-emerald-600' : 'text-2xl font-black text-red-600';
+        }
+
+        [inputTorque, inputPower, inputRpm, inputMass, inputDia, gearZ1, gearZ2].forEach(element => {
+            element.addEventListener('input', updateSim);
+        });
+
+        updateSim();
+    </script>
+</body>
+</html>
